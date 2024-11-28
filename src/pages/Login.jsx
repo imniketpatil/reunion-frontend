@@ -3,13 +3,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useGenericMutation } from "../hooks/useGenericMutation.js";
-import { useGenericQuery } from "../hooks/useGenericQuery.js";
 import { useNavigate } from "react-router-dom";
-import client_url from "../utils/config";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
-
+  const client_url = "https://reunion-backend-uxqw.onrender.com/api/v1";
   const navigate = useNavigate();
 
   const {
