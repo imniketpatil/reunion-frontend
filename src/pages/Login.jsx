@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useGenericMutation } from "../hooks/useGenericMutation.js";
 import { useGenericQuery } from "../hooks/useGenericQuery.js";
 import { useNavigate } from "react-router-dom";
-import { client_url } from "../utils/configUrl.js";
+import { client_url } from "../utils/client_url.js";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
