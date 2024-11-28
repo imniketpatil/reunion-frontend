@@ -12,7 +12,7 @@ function Register() {
   } = useForm();
 
   const { mutate, status, error } = useGenericMutation(
-    "http://localhost:8000/api/v1/users/register",
+    `${client_url}/users/register`,
     "POST"
   );
 
