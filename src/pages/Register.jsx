@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useGenericMutation } from "../hooks/useGenericMutation";
 import { QueryStatus } from "../hooks/statusEnum";
-import client_url from "../utils/client_url";
+import { client_url } from "../utils/client_url";
 function Register() {
   const {
     register,
