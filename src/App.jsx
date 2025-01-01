@@ -13,13 +13,14 @@ import PrivateRoute from "./utils/PrivateRoute";
 import OpenProfileMobileContextProvider from "./context/OpenProfileMobileContextProvider.jsx";
 import OpenDeleteTaskModelContextProvider from "./context/OpenDeleteTaskModelProvider.jsx";
 import OpenEditTaskModelContextProvider from "./context/OpenEditTaskModelContextProvider.jsx";
+import OpenAddTaskModelContextProvider from "./context/OpenAddTaskModelContextProvider.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const authToken = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!authToken); // Set based on token presence
+    setIsLoggedIn(!!authToken);
   }, []);
 
   const router = createBrowserRouter([
@@ -44,13 +45,15 @@ function App() {
   ]);
 
   return (
-    <OpenEditTaskModelContextProvider>
-      <OpenDeleteTaskModelContextProvider>
-        <OpenProfileMobileContextProvider>
-          <RouterProvider router={router} />
-        </OpenProfileMobileContextProvider>
-      </OpenDeleteTaskModelContextProvider>
-    </OpenEditTaskModelContextProvider>
+    <OpenAddTaskModelContextProvider>
+      <OpenEditTaskModelContextProvider>
+        <OpenDeleteTaskModelContextProvider>
+          <OpenProfileMobileContextProvider>
+            <RouterProvider router={router} />
+          </OpenProfileMobileContextProvider>
+        </OpenDeleteTaskModelContextProvider>
+      </OpenEditTaskModelContextProvider>
+    </OpenAddTaskModelContextProvider>
   );
 }
 

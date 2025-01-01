@@ -2,43 +2,25 @@ import { Button, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useGenericMutation } from "../hooks/useGenericMutation.js";
-import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../hooks/useDataFetchAndMutate.js";
 
 function Login() {
-  const [isLoading, setIsLoading] = useState(false);
-  const client_url = "https://reunion-backend-uxqw.onrender.com/api/v1";
-  const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
 
-  const { mutate, status, error } = useGenericMutation(
-    `${client_url}/users/login`,
-    "POST"
-  );
+  const { mutate, isLoading, isError, error } = useLoginMutation();
 
   const onSubmit = (data) => {
-    // mutate(data);
-    mutate(data, {
-      onSuccess: (responseData) => {
-        localStorage.setItem("accessToken", responseData.accessToken);
-      },
-      onError: (error) => {
-        console.error("Login failed:", error);
-      },
-    });
+    mutate(data);
   };
 
-  if (status === "success") navigate("/");
   return (
     <div className="dark">
       <div className="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4 text-center ">
+        <h1 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
           Reunion Task Manager
         </h1>
         <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
@@ -49,82 +31,32 @@ function Login() {
             <TextField
               id="outlined-email-input"
               label="Enter Username"
-              type="username"
+              type="text"
               variant="outlined"
-              sx={{
-                width: "100%",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white", // Default border color
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white", // Border color on hover
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white", // Border color when focused
-                    boxShadow: "0px 0px 4px rgba(0, 123, 255, 0.6)", // Add subtle shadow
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white", // Default label color
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white", // Label color when focused
-                },
-                "& .MuiInputBase-input": {
-                  color: "white", // Text color
-                },
-                "& .MuiInputBase-input::placeholder": {
-                  color: "gray", // Placeholder color
-                },
-                backgroundColor: "#374151", // Input background color
-                borderRadius: "5px", // Rounded corners
-              }}
+              fullWidth
               {...register("email", { required: "Email is required" })}
+              error={!!errors.email}
+              helperText={errors.email?.message}
             />
             <TextField
               id="outlined-password-input"
               label="Enter Password"
               type="password"
               variant="outlined"
-              sx={{
-                width: "100%",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white", // Default border color
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white", // Border color on hover
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "gray", // Border color when focused
-                    boxShadow: "0px 0px 1px rgba(0, 123, 255, 0.6)", // Add subtle shadow
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white", // Default label color
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white", // Label color when focused
-                },
-                "& .MuiInputBase-input": {
-                  color: "white", // Text color
-                },
-                "& .MuiInputBase-input::placeholder": {
-                  color: "gray", // Placeholder color
-                },
-                backgroundColor: "#374151", // Input background color
-                borderRadius: "5px", // Rounded corners
-              }}
+              fullWidth
               {...register("password", { required: "Password is required" })}
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
             <Button
               variant="contained"
               type="submit"
-              className={`w-full flex items-center justify-center text-white font-medium bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-md px-5 py-4 ${
+              fullWidth
+              color="primary"
+              disabled={isLoading}
+              className={`flex items-center justify-center ${
                 isLoading ? "cursor-not-allowed opacity-75" : ""
               }`}
-              disabled={isLoading}
             >
               {isLoading ? (
                 <svg
@@ -151,6 +83,11 @@ function Login() {
                 "Sign in"
               )}
             </Button>
+            {isError && (
+              <p className="text-sm text-red-500 text-center mt-2">
+                {isError.message || "Login failed. Please try again."}
+              </p>
+            )}
             <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
               Don’t have an account?{" "}
               <Link

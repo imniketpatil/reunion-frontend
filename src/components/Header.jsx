@@ -5,46 +5,34 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import { useNavigate } from "react-router-dom";
+import client_url from "../utils/config";
+// import { toast } from "react-toastify";
 
 const settings = ["Profile", "Logout"];
 
 function Header() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+  const handleCloseUserMenu = () => setAnchorElUser(null);
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const handleMenuItemClick = (setting) => {
+    if (setting === "Logout") {
+    }
+    handleCloseUserMenu();
   };
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: "#333" }}>
-      <Container maxWidth="xl">
+      <Box sx={{ flexGrow: 1, mx: "10px" }}>
         <Toolbar
           disableGutters
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
+          sx={{ display: "flex", justifyContent: "space-between" }}
         >
-          {/* Logo for larger screens */}
           <Typography
             variant="h6"
             noWrap
@@ -61,7 +49,6 @@ function Header() {
             Reunion Task Manager
           </Typography>
 
-          {/* Logo for mobile screens */}
           <Typography
             variant="h5"
             noWrap
@@ -80,35 +67,29 @@ function Header() {
           </Typography>
 
           <Box sx={{ flexGrow: 0 }}>
-            {/* User menu icon */}
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <AccountCircleRoundedIcon
-                  sx={{
-                    color: "white",
-                    fontSize: "2rem",
-                  }}
-                />
-              </IconButton>
-            </Tooltip>
+            <IconButton
+              onClick={handleOpenUserMenu}
+              aria-controls={anchorElUser ? "menu-appbar" : undefined}
+              aria-haspopup="true"
+              aria-expanded={Boolean(anchorElUser)}
+              sx={{ p: 0 }}
+            >
+              <AccountCircleRoundedIcon
+                sx={{ color: "white", fontSize: "2rem" }}
+              />
+            </IconButton>
             <Menu
-              sx={{ mt: "45px" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              sx={{ mt: "45px" }}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem
+                  key={setting}
+                  onClick={() => handleMenuItemClick(setting)}
+                >
                   <Typography sx={{ textAlign: "center" }}>
                     {setting}
                   </Typography>
@@ -117,7 +98,7 @@ function Header() {
             </Menu>
           </Box>
         </Toolbar>
-      </Container>
+      </Box>
     </AppBar>
   );
 }

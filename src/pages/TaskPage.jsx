@@ -9,19 +9,12 @@ import EditTask from "../components/EditTask";
 import DeleteTask from "../components/DeleteTask";
 import Button from "@mui/material/Button";
 import HistoryIcon from "@mui/icons-material/History";
-// import TasksTable from "../components/TasksTable";
-// import { toast } from "react-toastify";
+import OpenAddTaskModelContext from "../context/OpenAddTaskModelContext";
+import { useGetTasksQuery } from "../hooks/useDataFetchAndMutate";
+import { useQuery } from "@tanstack/react-query";
 
 export default function TaskPage() {
-  // States For Tasks
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [taskTitle, setTaskTitle] = React.useState("");
-  const [priority, setPriority] = React.useState(5);
-  const [status, setStatus] = React.useState(false); // false - Pending, true - Finished
-  const [startDate, setStartDate] = React.useState(null);
-  const [endDate, setEndDate] = React.useState(null);
-
-  // Context for Model to Open Close
+  const { isModalOpen, setIsModalOpen } = useContext(OpenAddTaskModelContext);
   const { openDeleteModel, setOpenDeleteModel } = useContext(
     OpenDeleteTaskModelContext
   );
@@ -29,54 +22,12 @@ export default function TaskPage() {
     OpenEditTaskModelContext
   );
 
-  // Function to toggle modal
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const handleSave = () => {
-    if (!taskTitle.trim()) {
-      // toast.error("Task title is required!");
-      return;
-    }
-
-    console.log({
-      taskTitle,
-      priority,
-      status,
-      startDate,
-      endDate,
-    });
-
-    // Add logic to save task (e.g., update state or call an API endpoint)
-    // toast.success("Task saved successfully!");
-
-    // Reset state and close modal
-    handleCancel();
-  };
-
   const handleCancel = () => {
-    setTaskTitle("");
-    setPriority(1);
-    setStatus(false);
-    setStartDate(null);
-    setEndDate(null);
-    setIsModalOpen(false); // Close modal without saving
-  };
-
-  const handleEdit = () => {
-    console.log("Edit task");
-    // Add logic for editing a task
-  };
-
-  const handleDelete = () => {
-    console.log("Delete task");
-    // Add logic for deleting a task
-  };
-
-  const handleMarkAsDone = () => {
-    console.log("Task marked as done");
-    // Add logic for marking task as done
+    setIsModalOpen(false);
   };
 
   const handleDeleteClick = () => {
@@ -87,9 +38,22 @@ export default function TaskPage() {
     setOpenEditTaskModel(!openEditTaskModel);
   };
 
+  const accessToken = localStorage.getItem("accessToken");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // console.log(user._id);
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["Tasks", user?._id],
+    queryFn: () => useGetTasksQuery(accessToken, user?._id),
+    enabled: !!accessToken && !!user?._id,
+    staleTime: 120000,
+    cacheTime: 120000,
+  });
+
   return (
     <>
-      <div className="">
+      <div>
         {/* Floating Add Button */}
         <div className="relative">
           <div className="fixed right-8 bottom-8 md:right-12 md:bottom-12">
@@ -161,42 +125,18 @@ export default function TaskPage() {
             </div>
 
             {/* Task Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 place-self-center sm:place-self-stretch">
-              {/* Add as many TaskCard components as needed */}
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-              <TaskCard />
-            </div>
+
+            {/* Add as many TaskCard components as needed */}
+            <TaskCard data={data} />
           </div>
         </div>
 
         {/* Add Task Modal */}
         {isModalOpen && (
           <AddTask
-            handleSave={handleSave}
             toggleModal={toggleModal}
             handleCancel={handleCancel}
-            taskTitle={taskTitle}
-            setTaskTitle={setTaskTitle}
-            priority={priority}
-            setPriority={setPriority}
-            status={status}
-            setStatus={setStatus}
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
+            setIsModalOpen={setIsModalOpen}
           />
         )}
 

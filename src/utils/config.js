@@ -1,4 +1,4 @@
 // config.js
-const client_url = "https://reunion-backend-uxqw.onrender.com/api/v1";
+const client_url = "http://localhost:8000/api/v1";
 
 export default client_url;

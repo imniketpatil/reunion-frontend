@@ -2,9 +2,8 @@ import { Button, TextField } from "@mui/material";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useGenericMutation } from "../hooks/useGenericMutation";
-import { QueryStatus } from "../hooks/statusEnum";
-import client_url from "../utils/config.js";
+import { useRegisterMutation } from "../hooks/useDataFetchAndMutate";
+
 function Register() {
   const {
     register,
@@ -12,13 +11,10 @@ function Register() {
     formState: { errors },
   } = useForm();
 
-  const { mutate, status, error } = useGenericMutation(
-    `${client_url}/users/register`,
-    "POST"
-  );
+  const { mutate, isLoading, isError, error } = useRegisterMutation();
 
   const onSubmit = (data) => {
-    console.log("Submitting data:", data);
+    // console.log(data);
 
     mutate(data);
   };
@@ -105,7 +101,7 @@ function Register() {
                   backgroundColor: "#374151", // Input background color
                   borderRadius: "5px", // Rounded corners
                 }}
-                {...register("email", { required: "Username is required" })}
+                {...register("email", { required: "Email is required" })}
               />
               <TextField
                 id="outlined-password-input"
@@ -148,13 +144,11 @@ function Register() {
                 variant="contained"
                 type="submit"
                 className={`w-full flex items-center justify-center text-white font-medium bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-md px-5 py-4 ${
-                  status === QueryStatus.LOADING
-                    ? "cursor-not-allowed opacity-75"
-                    : ""
+                  status === isLoading ? "cursor-not-allowed opacity-75" : ""
                 }`}
-                disabled={status === QueryStatus.LOADING}
+                disabled={status === isLoading}
               >
-                {status === QueryStatus.LOADING ? (
+                {status === isLoading ? (
                   <svg
                     className="animate-spin h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
